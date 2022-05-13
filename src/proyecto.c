@@ -10,29 +10,9 @@
 #include <unistd.h>
 #include <rpc/des_crypt.h>
 
-char* read_file(){
-  char* cipher;
-  long lSize;
-  FILE *fp;
-  //LECTURA DEL TEXTO
-  fp = fopen ("src/texto.txt", "rb" );
-  if(!fp) perror("texto.txt"),exit(1);
+char* crypted_file;
+char *search;
 
-  fseek(fp, 0L, SEEK_END);
-  lSize = ftell(fp);
-  rewind(fp);
-
-  /* allocate memory for entire content */
-  cipher = calloc(1, lSize+1);
-  if(!cipher) fclose(fp), fputs("memory alloc fails", stderr),exit(1);
-
-  /* copy the file into the cipher */
-  if(1!=fread( cipher , lSize, 1 , fp))
-    fclose(fp), free(cipher), fputs("entire read fails", stderr),exit(1);
-  /* do your work here, cipher is a string contains the whole text */
-  fclose(fp);
-  return cipher;
-}
 
 char* read_crypted(){
   char* cipher;
@@ -99,7 +79,6 @@ des_setparity((char *)&k); // el poder del casteo y &
 ecb_crypt((char *)&k, (char *)ciph, len, DES_ENCRYPT);
 }
 
-char search[] = " systems ";
 int tryKey(long key, char *ciph, int len)
 {
 char temp[len + 1];
@@ -118,19 +97,16 @@ int main(int argc, char *argv[])
   MPI_Request req;
   int flag;
   char *cipher;
-
+  if(argc >= 3){
+    crypted_file = argv[1];
+    search = argv[2];
+  }else{
+    crypted_file = "src/crypted.txt";
+    search = "systems";
+  }
   //LECTURA DEL TEXTO
   cipher = read_crypted();
 
-  //Inmediate finds it in case procesors 4
-
-  //Case it takes a loong long time
-  // long key = (1L<<56)/2 + (1L<<56)/8;
-  // long key = (1L<<56)/2 + 50000000L;
-  // encrypt(key, cipher, strlen(cipher));
-
-
-  // save_to_file(cipher);
 
   int ciphlen = strlen(cipher);
 

@@ -33,13 +33,13 @@ void save_to_file(char* cipher){
   fclose(f);
 }
 
-int main(){
+int main(int argc, char * argv[]){
     char cipher[] = "operating systems is fun";
-    // long key = (1L<<56)/2 + 50000000L;
-    long key = 1000L;
+    long key = 10000000L;
+    if(argc >= 2) {
+      sscanf(argv[1], "%ld", &key);
+    }
     encrypt(key, cipher, strlen(cipher));
-
-
     save_to_file(cipher);
     return 0;
 }
